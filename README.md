@@ -10,7 +10,7 @@ See protodiv.html for example usage.
 
 ## Why?
 
-* Because much of the work of constructing the page is shifted from the server to the client
+* Because much of the runtime work of constructing the page is shifted from the server to the client
 * The HTML can easily be designed and built by non-programmers.
 * The raw, dynamic data and the display of that data is almost entirely separated
 
@@ -28,10 +28,10 @@ the easier and faster it is to build things.  There is no need to find, setup, c
 and "learn" big, complicated 3rd party packages.
 
 With separation of the dynamic data and the static page layout, scaling becomes easier
-in that the static content is increased, the dynamic data is decreased.  Static
-data is much easier and more cheaply scaled up.  Reduction in the size of dyanmic data
-saves on bandwidth and increases the capacity of servers talking to the database, which
+in that the static content is increased, and the dynamic data is decreased.  Delivery of static
+data is cheaper and easier to scale up.  Delivery of less dyanmic data
+saves on bandwidth and reduces load on the servers that talk to the database, which
 is the weak spot when scaling.  In addition, having the dynamic data servers deliver only
-raw, unadorned data, you will get a near complete RESTful API for so that any client can
-consume the data in any way it likes.
+raw, unadorned data, you will automatically get a near complete RESTful API for so that
+any client can consume the data how it pleases.
 
