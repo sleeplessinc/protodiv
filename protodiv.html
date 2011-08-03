@@ -1,0 +1,27 @@
+<html>
+
+	<body>
+		<div id=stuff>
+			<div class=proto>
+				<div class=heading>[heading]</div>
+				<div>__name__</div>
+				<div>__when__</div>
+				<hr>
+			</div>
+		</div>
+	</body>
+
+	<script src=protodiv.js></script>
+	<script>
+		var data = [
+			{".heading": "Item 1", "name":"G. Washington", "when":"Jul 4, 1776"},
+			{".heading": "Item 2", "name":"C. Columbus", "when":"Aug 1, 1492"},
+			{".heading": "Item 3", "name":"F. Nightingale", "when":"Aug 9, 1942"},
+			{".heading": "Item 4", "name":"A. Adams", "when":"Nov 9, 1882"},
+		]
+
+		var pd = new ProtoDiv("stuff")
+		pd.replicate(data)
+
+	</script>
+</html>
