@@ -1,7 +1,7 @@
 <html>
-
 	<body>
-		<div id=stuff>
+		<div id=container>
+			<h1>Some interesting data</h1>
 			<div class=proto>
 				<div class=heading>[heading]</div>
 				<div>__name__</div>
@@ -10,7 +10,6 @@
 			</div>
 		</div>
 	</body>
-
 	<script src=protodiv.js></script>
 	<script>
 		var data = [
@@ -19,9 +18,7 @@
 			{".heading": "Item 3", "name":"F. Nightingale", "when":"Aug 9, 1942"},
 			{".heading": "Item 4", "name":"A. Adams", "when":"Nov 9, 1882"},
 		]
-
 		var pd = new ProtoDiv("stuff")
 		pd.replicate(data)
-
 	</script>
 </html>
