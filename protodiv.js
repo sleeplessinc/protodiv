@@ -1,6 +1,4 @@
 
-// Assumes jquery is available
-
 function ProtoDiv(id) {
 
 	this.proto = document.getElementById(id)
