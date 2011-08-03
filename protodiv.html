@@ -1,11 +1,18 @@
 <html>
 	<body>
-		<div>
+
+
+		<div> <!-- this is just to provide a parent.  not ideal to be sure. -->
 			<div id=header>
 				<h1 id=title></h1>
 			</div>
 		</div>
-		<h1>Some interesting data</h1>
+
+		<div id=menu>
+			<span id=menuitem>&nbsp;<a href="/__page__">__label__</a>&nbsp;</span>
+		</div>
+
+		<h1>Some Interesting Data</h1>
 		<div id=container>
 			<div id=protodiv>
 				<div class=heading>[heading]</div>
@@ -14,30 +21,48 @@
 				<hr>
 			</div>
 		</div>
+
+
 	</body>
 	<script src=protodiv.js></script>
 	<script>
+
+		var pd
+
+		// just a single set of substitutions using one json object
 		var hdata = {"#title": "PROTODIV DEMO"}
+		pd = new ProtoDiv("header")
+		pd.substitute(hdata)
+
+
+		// structure of html irrelevant.  only the injection points matter.
+		var menudata = [
+			{page: "", label:"Home", },
+			{page: "about.html", label:"About Us", },
+			{page: "contact.html", label:"Contact", },
+		]
+		pd = new ProtoDiv("menuitem")
+		pd.replicate(menudata)
+
+
+		// a repeating set of substitutions using an array of json objects
 		var data = [
 			{".heading": "General", "name":"Washington", ".when":"Jul 4, 1776"},
 			{".heading": "Sailer", "name":"Columbus", },
 			{".heading": "Hottie", "name":"Nightingale", },
 		]
+		pd = new ProtoDiv("protodiv")
+		pd.replicate(data)
+
+
+		// demonstrating clearing and inserting new data.
 		var data2 = [
 			{".heading": "Earth", "name":"Home of the brave", ".when":""},
 			{".heading": "Mars", "name":"Home of the green", ".when":""},
 			{".heading": "Venus", "name":"Home of the hotties (literally)", ".when":""},
 		]
-
-		// just a single set of substitutions using one json object
-		var hpd = new ProtoDiv("header")
-		hpd.substitute(hdata)
-
-		// a repeating set of substitutions using an array of json objects
-		var pd = new ProtoDiv("protodiv")
-		pd.replicate(data)
 		setTimeout(function() {
-			pd.clear().replicate(data2)		// demonstrating clearing and inserting new data.
+			pd.clear().replicate(data2)
 		}, 2000)
 
 
