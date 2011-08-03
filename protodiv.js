@@ -30,11 +30,6 @@ function ProtoDiv(id) {
 	self.mommy = self.proto.parentNode 
 	self.mommy.removeChild(self.proto)
 
-	self.clear = function() {
-		self.mommy.innerHTML = ""
-		return self
-	}
-
 	self.map = function(node, list, cb) {
 		if(node.hasChildNodes()) {
 			var kids = node.childNodes
@@ -53,49 +48,58 @@ function ProtoDiv(id) {
 			cb(list[i])
 	}
 
-	self.replicate = function(data) {
-		var dl, i, clone, h, d, re, list, c
+	self.substitute = function(obj, elem) {
+		var elem, h, re, list, c
 
-		dl = data.length
-		for(i = 0; i < dl; i++) {
+		elem = elem || self.proto
+		h = elem.innerHTML
 
-			clone = self.proto.cloneNode(true)
-			h = clone.innerHTML
-
-			d = data[i]
-			for(key in d) {
-				switch(key.substring(0,1)) {
-				case ".":
-				case "#":
-					break
-				default:
-					re = new RegExp("__"+key+"__", "g")
-					h = h.replace(re, d[key])
-				}
+		for(key in obj) {
+			switch(key.substring(0,1)) {
+			case ".":
+			case "#":
+				break
+			default:
+				re = new RegExp("__"+key+"__", "g")
+				h = h.replace(re, obj[key])
 			}
-
-			clone.innerHTML = h
-
-			for(key in d) {
-				c = key.substring(1)
-				list = []
-				switch(key.substring(0,1)) {
-				case "#":
-				case ".":
-					self.map(clone, list, function(e) {
-						return e.className == c || e.id == c
-					})
-					self.reduce(list, function(e) {
-						e.innerHTML = d[key]
-					})
-					break
-				}
-			}
-
-			self.mommy.appendChild(clone)
 		}
+
+		elem.innerHTML = h
+
+		for(key in obj) {
+			c = key.substring(1)
+			list = []
+			switch(key.substring(0,1)) {
+			case "#":
+			case ".":
+				self.map(elem, list, function(e) {
+					return e.className == c || e.id == c
+				})
+				self.reduce(list, function(e) {
+					e.innerHTML = obj[key]
+				})
+				break
+			}
+		}
+
+		self.mommy.appendChild(elem)
 
 		return self
 	}
+
+	self.replicate = function(arr) {
+		var l = arr.length, i
+		for(i = 0; i < l; i++) {
+			self.substitute(arr[i], self.proto.cloneNode(true))
+		}
+		return self
+	}
+
+	self.clear = function() {
+		self.mommy.innerHTML = ""
+		return self
+	}
+
 }
 
