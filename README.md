@@ -5,7 +5,10 @@ Simple client-side code for displaying dynamic data.
 
 ## Example
 
-See protodiv.html for example usage.
+See page1.html for example usage.
+
+See page2.html as example of how the page can be completely change without having to modify the code
+or data at all.
 
 
 ## Why?
