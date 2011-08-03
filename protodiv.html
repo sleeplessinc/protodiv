@@ -2,10 +2,10 @@
 	<body>
 		<div id=container>
 			<h1>Some interesting data</h1>
-			<div class=proto>
+			<div id=protodiv>
 				<div class=heading>[heading]</div>
 				<div>__name__</div>
-				<div>__when__</div>
+				<div id=when>Unknown</div>
 				<hr>
 			</div>
 		</div>
@@ -13,12 +13,11 @@
 	<script src=protodiv.js></script>
 	<script>
 		var data = [
-			{".heading": "Item 1", "name":"G. Washington", "when":"Jul 4, 1776"},
-			{".heading": "Item 2", "name":"C. Columbus", "when":"Aug 1, 1492"},
-			{".heading": "Item 3", "name":"F. Nightingale", "when":"Aug 9, 1942"},
-			{".heading": "Item 4", "name":"A. Adams", "when":"Nov 9, 1882"},
+			{".heading": "General", "name":"Washington", "#when":"Jul 4, 1776"},
+			{".heading": "Sailer", "name":"Columbus", },
+			{".heading": "Hottie", "name":"Nightingale", },
 		]
-		var pd = new ProtoDiv("stuff")
+		var pd = new ProtoDiv("protodiv")
 		pd.replicate(data)
 	</script>
 </html>
