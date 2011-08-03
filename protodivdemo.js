@@ -9,8 +9,8 @@ pd.substitute(hdata)
 
 // structure of html irrelevant.  only the injection points matter.
 var menudata = [
-	{page: "page1", label:"Page #1", },
-	{page: "page2", label:"Page #2", },
+	{page: "./page1.html", label:"Page #1", },
+	{page: "./page2.html", label:"Page #2", },
 ]
 pd = new ProtoDiv("menuitem")
 pd.replicate(menudata)
