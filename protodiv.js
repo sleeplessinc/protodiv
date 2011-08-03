@@ -1,40 +1,65 @@
 
+/*
+Copyright 2011 Sleepless Software Inc. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE. 
+*/
+
 function ProtoDiv(id) {
+	
+	var self = this
 
-	this.proto = document.getElementById(id)
-	this.proto.id = ""
-	this.mommy = this.proto.parentNode 
-	this.mommy.removeChild(this.proto)
+	self.proto = document.getElementById(id)
+	self.proto.id = ""
+	self.mommy = self.proto.parentNode 
+	self.mommy.removeChild(self.proto)
 
-	this.clear = function() {
-		this.mommy.innerHTML = ""
+	self.clear = function() {
+		self.mommy.innerHTML = ""
+		return self
 	}
 
-	this.map = function(node, list, cb) {
+	self.map = function(node, list, cb) {
 		if(node.hasChildNodes()) {
 			var kids = node.childNodes
 			for(var i = 0; i < kids.length; i++) {
 				var kid = kids[i]
 				if(cb(kid))
 					list.push(kid)
-				this.map(kid, list, cb)
+				self.map(kid, list, cb)
 			}
 		}
 	}
 
-	this.reduce = function(list, cb) {
+	self.reduce = function(list, cb) {
 		var i, l = list.length
 		for(i = 0; i < l; i++) 
 			cb(list[i])
 	}
 
-	this.replicate = function(data) {
+	self.replicate = function(data) {
 		var dl, i, clone, h, d, re, list, c
 
 		dl = data.length
 		for(i = 0; i < dl; i++) {
 
-			clone = this.proto.cloneNode(true)
+			clone = self.proto.cloneNode(true)
 			h = clone.innerHTML
 
 			d = data[i]
@@ -55,29 +80,22 @@ function ProtoDiv(id) {
 				c = key.substring(1)
 				list = []
 				switch(key.substring(0,1)) {
-				case ".":
-					this.map(clone, list, function(e) {
-						return e.className == c
-					})
-					this.reduce(list, function(e) {
-						e.innerHTML = d[key]
-					})
-					break
 				case "#":
-					this.map(clone, list, function(e) {
-						return e.id == c
+				case ".":
+					self.map(clone, list, function(e) {
+						return e.className == c || e.id == c
 					})
-					this.reduce(list, function(e) {
+					self.reduce(list, function(e) {
 						e.innerHTML = d[key]
 					})
 					break
 				}
 			}
 
-			this.mommy.appendChild(clone)
+			self.mommy.appendChild(clone)
 		}
+
+		return self
 	}
 }
-
-
 
