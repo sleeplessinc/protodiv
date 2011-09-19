@@ -29,6 +29,7 @@ function ProtoDiv(id) {
 	self.proto.id = ""
 	self.mommy = self.proto.parentNode 
 	self.mommy.removeChild(self.proto)
+	self.sibs = self.mommy.innerHTML || ""
 
 	self.map = function(node, list, cb) {
 		if(node.hasChildNodes()) {
@@ -97,7 +98,7 @@ function ProtoDiv(id) {
 	}
 
 	self.clear = function() {
-		self.mommy.innerHTML = ""
+		self.mommy.innerHTML = self.sibs
 		return self
 	}
 
