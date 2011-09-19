@@ -103,3 +103,18 @@ function ProtoDiv(id) {
 
 }
 
+ProtoDiv.inject = function(obj, id) {
+	var elem = document.getElementById(id)
+	var html = elem.outerHTML
+	var re
+
+	for(key in obj) {
+		dbg("key "+key)
+		re = new RegExp("__"+key+"__", "g")
+		html = html.replace(re, obj[key])
+	}
+
+	elem.outerHTML = html
+}
+
+
