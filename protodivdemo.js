@@ -1,13 +1,11 @@
 
+// just a single set of substitutions using one json object
+new ProtoDiv("header").substitute({"#title": "PROTODIV DEMO"})
+
+
 var pd
 
-// just a single set of substitutions using one json object
-var hdata = {"#title": "PROTODIV DEMO"}
-pd = new ProtoDiv("header")
-pd.substitute(hdata)
-
-
-// structure of html irrelevant.  only the injection points matter.
+// structure of the html is irrelevant.  only the injection points matter.
 var menudata = [
 	{page: "./page1.html", label:"Page #1", },
 	{page: "./page2.html", label:"Page #2", },
