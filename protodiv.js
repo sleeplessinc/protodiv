@@ -21,14 +21,15 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE. 
 */
 
+/*
 function ProtoDiv(id) {
 	
 	var self = this
 
 	self.proto = document.getElementById(id)
 	self.proto.id = ""
-	self.mommy = self.proto.parentNode 
-	self.mommy.removeChild(self.proto)
+	self.mom = self.proto.parentNode 
+	self.mom.removeChild(self.proto)
 
 	self.map = function(node, list, cb) {
 		if(node.hasChildNodes()) {
@@ -83,7 +84,7 @@ function ProtoDiv(id) {
 			}
 		}
 
-		self.mommy.appendChild(elem)
+		self.mom.appendChild(elem)
 
 		return self
 	}
@@ -97,24 +98,113 @@ function ProtoDiv(id) {
 	}
 
 	self.clear = function() {
-		self.mommy.innerHTML = ""
+		self.mom.innerHTML = ""
 		return self
 	}
 
 }
+ * */
 
-ProtoDiv.inject = function(obj, id) {
-	var elem = document.getElementById(id)
-	var html = elem.outerHTML
+ProtoDiv = {}
+
+ProtoDiv.elem = function(v) {
+	return (typeof v === "string") ? document.getElementById(v) : v
+}
+
+ProtoDiv.inject = function(id, obj) {
+	var proto = ProtoDiv.elem(id)
+	var html = proto.outerHTML
 	var re
 
 	for(key in obj) {
-		dbg("key "+key)
-		re = new RegExp("__"+key+"__", "g")
-		html = html.replace(re, obj[key])
+		switch(key.substring(0,1)) {
+		case ".":
+		case "#":
+			break
+		default:
+			re = new RegExp("__"+key+"__", "g")
+			html = html.replace(re, obj[key])
+		}
 	}
 
-	elem.outerHTML = html
+	proto.outerHTML = html
+
+	for(key in obj) {
+		c = key.substring(1)
+		list = []
+		switch(key.substring(0,1)) {
+		case "#":
+			ProtoDiv.map(proto, list, function(e) {
+				return e.id == c
+			})
+			ProtoDiv.reduce(list, function(e) {
+				e.innerHTML = obj[key]
+			})
+			break
+		case ".":
+			ProtoDiv.map(proto, list, function(e) {
+				return e.className == c
+			})
+			ProtoDiv.reduce(list, function(e) {
+				e.innerHTML = obj[key]
+			})
+			break
+		}
+	}
+}
+
+ProtoDiv.reduce = function(list, cb) {
+	var i, l = list.length
+	for(i = 0; i < l; i++) 
+		cb(list[i])
+}
+
+ProtoDiv.map = function(node, list, cb) {
+	if(node.hasChildNodes()) {
+		var kids = node.childNodes
+		for(var i = 0; i < kids.length; i++) {
+			var kid = kids[i]
+			if(cb(kid))
+				list.push(kid)
+			ProtoDiv.map(kid, list, cb)
+		}
+	}
+}
+
+ProtoDiv.replicate = function(id, arr, keep) {
+	if(!(arr instanceof Array))
+		arr = [arr]
+	var proto = ProtoDiv.elem(id)
+	var sib = proto.nextSibling 	// might be null
+	var mom = proto.parentNode
+	var l = arr.length
+	var obj
+	
+	proto.mark = 7
+
+	if(proto.origSib === undefined) {
+		proto.origSib = sib
+	}
+
+	for(i = 0; i < l; i++) {
+		obj = arr[i]
+		e = proto.cloneNode(true)
+		delete e.id
+		mom.insertBefore(e, sib)
+		ProtoDiv.inject(e, obj)
+	}
+	if(!keep)
+		proto.style.display = "none";
+}
+
+ProtoDiv.reset = function(id) {
+	var proto = ProtoDiv.elem(id)
+	if(proto.origSib !== undefined) {
+		while(proto.nextSibling !== proto.origSib) {
+			proto.parentNode.removeChild(proto.nextSibling)
+		}
+		delete proto.origSib
+	}
 }
 
 
