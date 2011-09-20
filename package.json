@@ -1,6 +1,6 @@
 {
 	"name": "protodiv",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description" : "Simple client-side code for displaying dynamic data",
 	"author": "Joe Hitchens <joe@sleepless.com> (sleepless.com)",
 	"license": {

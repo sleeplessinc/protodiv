@@ -21,90 +21,6 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE. 
 */
 
-/*
-function ProtoDiv(id) {
-	
-	var self = this
-
-	self.proto = document.getElementById(id)
-	self.proto.id = ""
-	self.mom = self.proto.parentNode 
-	self.mom.removeChild(self.proto)
-
-	self.map = function(node, list, cb) {
-		if(node.hasChildNodes()) {
-			var kids = node.childNodes
-			for(var i = 0; i < kids.length; i++) {
-				var kid = kids[i]
-				if(cb(kid))
-					list.push(kid)
-				self.map(kid, list, cb)
-			}
-		}
-	}
-
-	self.reduce = function(list, cb) {
-		var i, l = list.length
-		for(i = 0; i < l; i++) 
-			cb(list[i])
-	}
-
-	self.substitute = function(obj, elem) {
-		var elem, h, re, list, c
-
-		elem = elem || self.proto
-		h = elem.innerHTML
-
-		for(key in obj) {
-			switch(key.substring(0,1)) {
-			case ".":
-			case "#":
-				break
-			default:
-				re = new RegExp("__"+key+"__", "g")
-				h = h.replace(re, obj[key])
-			}
-		}
-
-		elem.innerHTML = h
-
-		for(key in obj) {
-			c = key.substring(1)
-			list = []
-			switch(key.substring(0,1)) {
-			case "#":
-			case ".":
-				self.map(elem, list, function(e) {
-					return e.className == c || e.id == c
-				})
-				self.reduce(list, function(e) {
-					e.innerHTML = obj[key]
-				})
-				break
-			}
-		}
-
-		self.mom.appendChild(elem)
-
-		return self
-	}
-
-	self.replicate = function(arr) {
-		var l = arr.length, i
-		for(i = 0; i < l; i++) {
-			self.substitute(arr[i], self.proto.cloneNode(true))
-		}
-		return self
-	}
-
-	self.clear = function() {
-		self.mom.innerHTML = ""
-		return self
-	}
-
-}
- * */
-
 ProtoDiv = {}
 
 ProtoDiv.elem = function(v) {
@@ -180,10 +96,9 @@ ProtoDiv.replicate = function(id, arr, keep) {
 	var l = arr.length
 	var obj
 	
-	proto.mark = 7
-
 	if(proto.origSib === undefined) {
 		proto.origSib = sib
+		proto.origDisplay = proto.style.display
 	}
 
 	for(i = 0; i < l; i++) {
@@ -194,16 +109,20 @@ ProtoDiv.replicate = function(id, arr, keep) {
 		ProtoDiv.inject(e, obj)
 	}
 	if(!keep)
-		proto.style.display = "none";
+		proto.style.display = "none"
+
+	return proto
 }
 
 ProtoDiv.reset = function(id) {
 	var proto = ProtoDiv.elem(id)
 	if(proto.origSib !== undefined) {
+		proto.style.display = proto.origDisplay
 		while(proto.nextSibling !== proto.origSib) {
 			proto.parentNode.removeChild(proto.nextSibling)
 		}
 		delete proto.origSib
+		delete proto.origDisplay
 	}
 }
 
