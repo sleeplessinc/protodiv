@@ -21,29 +21,49 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE. 
 */
 
+
 ProtoDiv = {}
 
 ProtoDiv.elem = function(v) {
 	return (typeof v === "string") ? document.getElementById(v) : v
 }
 
-ProtoDiv.inject = function(id, obj) {
-	var proto = ProtoDiv.elem(id)
-	var html = proto.outerHTML
-	var re
+ProtoDiv.reduce = function(list, cb) {
+	var i, l = list.length
+	for(i = 0; i < l; i++) 
+		cb(list[i])
+}
 
-	for(key in obj) {
-		switch(key.substring(0,1)) {
-		case ".":
-		case "#":
-			break
-		default:
-			re = new RegExp("__"+key+"__", "g")
-			html = html.replace(re, obj[key])
+ProtoDiv.map = function(node, list, cb) {
+	if(node.hasChildNodes()) {
+		var kids = node.childNodes
+		for(var i = 0; i < kids.length; i++) {
+			var kid = kids[i]
+			if(cb(kid))
+				list.push(kid)
+			ProtoDiv.map(kid, list, cb)
 		}
 	}
+}
 
-	proto.outerHTML = html
+ProtoDiv.substitute = function(s, obj) {
+	for(key in obj) {
+		re = new RegExp("__"+key+"__", "g")
+		s = s.replace(re, obj[key])
+	}
+	return s
+}
+
+ProtoDiv.inject = function(id, obj) {
+	var proto = ProtoDiv.elem(id)
+	var i
+
+	proto.innerHTML = ProtoDiv.substitute(proto.innerHTML, obj)
+
+	for(i = 0; i < proto.attributes.length; i++) {
+		a = proto.attributes[i]
+		a.textContent = ProtoDiv.substitute(a.textContent, obj)
+	}
 
 	for(key in obj) {
 		c = key.substring(1)
@@ -67,32 +87,16 @@ ProtoDiv.inject = function(id, obj) {
 			break
 		}
 	}
-}
 
-ProtoDiv.reduce = function(list, cb) {
-	var i, l = list.length
-	for(i = 0; i < l; i++) 
-		cb(list[i])
-}
-
-ProtoDiv.map = function(node, list, cb) {
-	if(node.hasChildNodes()) {
-		var kids = node.childNodes
-		for(var i = 0; i < kids.length; i++) {
-			var kid = kids[i]
-			if(cb(kid))
-				list.push(kid)
-			ProtoDiv.map(kid, list, cb)
-		}
-	}
+	return proto
 }
 
 ProtoDiv.replicate = function(id, arr, keep) {
-	if(!(arr instanceof Array))
-		arr = [arr]
 	var proto = ProtoDiv.elem(id)
 	var sib = proto.nextSibling 	// might be null
 	var mom = proto.parentNode
+	if(!(arr instanceof Array))
+		arr = [arr]
 	var l = arr.length
 	var obj
 	
@@ -108,6 +112,7 @@ ProtoDiv.replicate = function(id, arr, keep) {
 		mom.insertBefore(e, sib)
 		ProtoDiv.inject(e, obj)
 	}
+
 	if(!keep)
 		proto.style.display = "none"
 
@@ -124,6 +129,7 @@ ProtoDiv.reset = function(id) {
 		delete proto.origSib
 		delete proto.origDisplay
 	}
+	return proto
 }
 
 

@@ -1,17 +1,13 @@
 
 // just a single set of substitutions using one json object
-new ProtoDiv("header").substitute({"#title": "PROTODIV DEMO"})
-
-
-var pd
+new ProtoDiv.inject("header", {"#title": "PROTODIV DEMO"})
 
 // structure of the html is irrelevant.  only the injection points matter.
 var menudata = [
 	{page: "./page1.html", label:"Page #1", },
 	{page: "./page2.html", label:"Page #2", },
 ]
-pd = new ProtoDiv("menuitem")
-pd.replicate(menudata)
+ProtoDiv.replicate("menuitem", menudata)
 
 
 // a repeating set of substitutions using an array of json objects
@@ -20,19 +16,20 @@ var data = [
 	{".heading": "Sailer", "name":"Columbus", },
 	{".heading": "Hottie", "name":"Nightingale", },
 ]
-pd = new ProtoDiv("protodiv")
-pd.replicate(data)
+ProtoDiv.replicate("protodiv", data)
 
 
 // demonstrating clearing and inserting new data.
 var data2 = [
 	{".heading": "Earth", "name":"Home of the brave", ".when":""},
 	{".heading": "Mars", "name":"Home of the green", ".when":""},
-	{".heading": "Venus", "name":"Home of the hotties (literally)", ".when":""},
+	{".heading": "Venus", "name":"Home of the hotties", ".when":""},
 ]
 setTimeout(function() {
-	pd.clear().replicate(data2)
+	ProtoDiv.reset("protodiv")
+	ProtoDiv.replicate("protodiv", data2)
 }, 2000)
 
 
-
+/*
+*/
