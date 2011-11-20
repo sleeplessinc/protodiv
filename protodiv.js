@@ -62,7 +62,8 @@ ProtoDiv.inject = function(id, obj) {
 
 	for(i = 0; i < proto.attributes.length; i++) {
 		a = proto.attributes[i]
-		a.textContent = ProtoDiv.substitute(a.textContent, obj)
+		var x = a.textContent ? 'textContent' : 'value';
+		a[x] = ProtoDiv.substitute(a[x], obj)    
 	}
 
 	for(key in obj) {
