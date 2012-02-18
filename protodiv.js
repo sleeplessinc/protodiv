@@ -133,4 +133,7 @@ ProtoDiv.reset = function(id) {
 	return proto
 }
 
-
+ProtoDiv.rere = function(id, arr, keep) {
+    ProtoDiv.reset(id)
+    ProtoDiv.replicate(id, arr, keep)
+}   
