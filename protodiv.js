@@ -106,10 +106,12 @@ ProtoDiv.replicate = function(id, arr, keep) {
 
 	for(var i = 0; i < l; i++) {
 		obj = arr[i]
-		var e = proto.cloneNode(true)
-		delete e.id
-		mom.insertBefore(e, sib)
-		ProtoDiv.inject(e, obj)
+		if(obj) {
+			var e = proto.cloneNode(true)
+			delete e.id
+			mom.insertBefore(e, sib)
+			ProtoDiv.inject(e, obj)
+		}
 	}
 
 	if(!keep)
