@@ -1,6 +1,6 @@
 
 /*
-Copyright 2011 Sleepless Software Inc. All rights reserved.
+Copyright 2013 Sleepless Software Inc. All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -24,26 +24,12 @@ IN THE SOFTWARE.
 
 ProtoDiv = {}
 
-ProtoDiv.elem = function(v) {
-	return (typeof v === "string") ? document.getElementById(v) : v
-}
-
-ProtoDiv.reduce = function(list, cb) {
-	var i, l = list.length
-	for(i = 0; i < l; i++) 
-		cb(list[i])
-}
-
-ProtoDiv.map = function(node, list, cb) {
-	if(node.hasChildNodes()) {
-		var kids = node.childNodes
-		for(var i = 0; i < kids.length; i++) {
-			var kid = kids[i]
-			if(cb(kid))
-				list.push(kid)
-			ProtoDiv.map(kid, list, cb)
-		}
-	}
+ProtoDiv.elem = function( v ) {
+	if( typeof v === "string")
+		return document.getElementById(v);
+	if( v instanceof HTMLElement )
+		return v;
+	return document.body;
 }
 
 ProtoDiv.substitute = function(s, obj) {
@@ -55,6 +41,7 @@ ProtoDiv.substitute = function(s, obj) {
 }
 
 ProtoDiv.inject = function(id, obj) {
+
 	var proto = ProtoDiv.elem(id)
 
 	proto.innerHTML = ProtoDiv.substitute(proto.innerHTML, obj)
@@ -65,48 +52,46 @@ ProtoDiv.inject = function(id, obj) {
 		a[x] = ProtoDiv.substitute(a[x], obj)    
 	}
 
-	for(var key in obj) {
-		var c = key.substring(1)
-		var list = []
-		switch(key.substring(0,1)) {
-		case "#":
-			ProtoDiv.map(proto, list, function(e) {
-				return e.id == c
-			})
-			ProtoDiv.reduce(list, function(e) {
-				e.innerHTML = obj[key]
-			})
-			break
-		case ".":
-			ProtoDiv.map(proto, list, function(e) {
-				return e.className == c
-			})
-			ProtoDiv.reduce(list, function(e) {
-				e.innerHTML = obj[key]
-			})
-			break
-		}
-	}
-
 	return proto
 }
 
-ProtoDiv.replicate = function(id, arr, keep) {
-	var proto = ProtoDiv.elem(id)
-	var sib = proto.nextSibling 	// might be null
-	var mom = proto.parentNode
+
+/*
+Valid usage:
+
+	element == body:
+		replicate( array )
+		replicate( array, callback )
+
+	element provided:
+		replicate( array, element )
+		replicate( array, element, callback )
+*/
+ProtoDiv.replicate = function( arr, e, cb ) {
+
 	if(!(arr instanceof Array))
 		arr = [arr]
-	var l = arr.length
-	var obj
-	
-	if(proto.origSib === undefined) {
-		proto.origSib = sib
-		proto.origDisplay = proto.style.display
+
+	proto = document.body;
+
+	if( typeof e === "function" ) {
+		cb = e;
+	}
+	else {
+		proto = ProtoDiv.elem( e );
 	}
 
+	var sib = proto.nextSibling 	// might be null
+	var mom = proto.parentNode
+
+	if(proto.origSib === undefined) {
+		proto.origSib = sib
+		//proto.origDisplay = proto.style.display
+	}
+
+	var l = arr.length
 	for(var i = 0; i < l; i++) {
-		obj = arr[i]
+		var obj = arr[i]
 		if(obj) {
 			var e = proto.cloneNode(true)
 			delete e.id
@@ -115,26 +100,30 @@ ProtoDiv.replicate = function(id, arr, keep) {
 		}
 	}
 
-	if(!keep)
-		proto.style.display = "none"
+	//if(!keep)
+	//	proto.style.display = "none"
 
 	return proto
 }
 
-ProtoDiv.reset = function(id) {
-	var proto = ProtoDiv.elem(id)
-	if(proto.origSib !== undefined) {
-		proto.style.display = proto.origDisplay
-		while(proto.nextSibling !== proto.origSib) {
-			proto.parentNode.removeChild(proto.nextSibling)
+ProtoDiv.reset = function( proto ) {
+	//var proto = ProtoDiv.elem( e )
+	if( proto ) {
+		if(proto.origSib !== undefined) {
+			//proto.style.display = proto.origDisplay
+			while( proto.nextSibling !== proto.origSib ) {
+				proto.parentNode.removeChild(proto.nextSibling)
+			}
+			//delete proto.origSib
+			//delete proto.origDisplay
 		}
-		delete proto.origSib
-		delete proto.origDisplay
 	}
 	return proto
 }
 
-ProtoDiv.rere = function(id, arr, keep) {
-    ProtoDiv.reset(id)
-    ProtoDiv.replicate(id, arr, keep)
-}   
+ProtoDiv.rere = function( arr, e ) {
+    ProtoDiv.reset( e )
+    ProtoDiv.replicate( arr, e )
+}
+
+
