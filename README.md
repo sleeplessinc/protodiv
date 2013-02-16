@@ -13,10 +13,9 @@ modify the code or data at all.
 
 ## Why?
 
-* Reduces the load on the server as much of the page layout it done in the browser.
+* Reduces the load on the server as much of the page layout is done in the browser.
 * The HTML can easily be designed and built by non-programmers.
 * The raw, dynamic data and the display of that data is almost entirely separated
-* A RESTful API to your server happens automatically.
 
 
 ## Why is that good?
