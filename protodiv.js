@@ -40,90 +40,91 @@ ProtoDiv.substitute = function(s, obj) {
 	return s
 }
 
-ProtoDiv.inject = function(id, obj) {
+ProtoDiv.inject = function( elem, hash ) {
 
-	var proto = ProtoDiv.elem(id)
+	var e = ProtoDiv.elem( elem )
 
-	proto.innerHTML = ProtoDiv.substitute(proto.innerHTML, obj)
+	e.innerHTML = ProtoDiv.substitute( e.innerHTML, hash )
 
-	for(i = 0; i < proto.attributes.length; i++) {
-		a = proto.attributes[i]
+	for(i = 0; i < e.attributes.length; i++) {
+		a = e.attributes[i]
 		var x = a.textContent ? 'textContent' : 'value';
-		a[x] = ProtoDiv.substitute(a[x], obj)    
+		a[x] = ProtoDiv.substitute(a[x], hash)    
 	}
 
-	return proto
+	return e
 }
 
 
-/*
-Valid usage:
-
-	element == body:
-		replicate( array )
-		replicate( array, callback )
-
-	element provided:
-		replicate( array, element )
-		replicate( array, element, callback )
-*/
-ProtoDiv.replicate = function( arr, e, cb ) {
+ProtoDiv.replicate = function( arr, orig, cb ) {
 
 	if(!(arr instanceof Array))
 		arr = [arr]
 
-	proto = document.body;
-
-	if( typeof e === "function" ) {
-		cb = e;
+	if( typeof orig === "function" ) {
+		cb = orig;
+		orig = document.body;
 	}
 	else {
-		proto = ProtoDiv.elem( e );
+		orig = ProtoDiv.elem( orig );
 	}
 
-	var sib = proto.nextSibling 	// might be null
-	var mom = proto.parentNode
+	var sib = orig.nextSibling 	// can be null
+	orig.sib = sib;
+	var mom = orig.parentNode
+	orig.mom = mom;
 
-	if(proto.origSib === undefined) {
-		proto.origSib = sib
-		//proto.origDisplay = proto.style.display
-	}
+	orig.remove();		// take out of dom
+
+	orig.clones = [];	// for storing refs to the clones
 
 	var l = arr.length
 	for(var i = 0; i < l; i++) {
-		var obj = arr[i]
-		if(obj) {
-			var e = proto.cloneNode(true)
-			delete e.id
-			mom.insertBefore(e, sib)
-			ProtoDiv.inject(e, obj)
+
+		var a = arr[i]
+
+		var e = orig.cloneNode(true)
+		delete e.id
+
+		orig.clones.push( e );
+
+		mom.insertBefore(e, sib)
+
+		ProtoDiv.inject(e, a)
+
+		if( cb ) {
+			cb( e );
 		}
 	}
 
-	//if(!keep)
-	//	proto.style.display = "none"
-
-	return proto
+	return orig
 }
 
-ProtoDiv.reset = function( proto ) {
-	//var proto = ProtoDiv.elem( e )
-	if( proto ) {
-		if(proto.origSib !== undefined) {
-			//proto.style.display = proto.origDisplay
-			while( proto.nextSibling !== proto.origSib ) {
-				proto.parentNode.removeChild(proto.nextSibling)
-			}
-			//delete proto.origSib
-			//delete proto.origDisplay
-		}
+ProtoDiv.reset = function( orig ) {
+
+	if( ! orig )
+		return;
+
+	var clones = orig.clones;
+	if( ! clones )
+		return;
+
+	var l = clones.length;
+	if( l < 1 )
+		return;
+	
+	// replace original element
+	orig.mom.insertBefore( orig, clones[0] );
+
+	// remove the clones
+	for( var i = 0; i < l; i++ ) {
+		clones[i].remove();
 	}
-	return proto
 }
 
-ProtoDiv.rere = function( arr, e ) {
-    ProtoDiv.reset( e )
-    ProtoDiv.replicate( arr, e )
+ProtoDiv.rere = function( arr, orig, cb ) {
+    ProtoDiv.reset( orig )
+    ProtoDiv.replicate( arr, orig, cb )
 }
 
 

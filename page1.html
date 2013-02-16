@@ -2,6 +2,9 @@
 	<body>
 		<h1> Example #1 </h1>
 
+		<style>
+			.hid { visibility: hidden; }
+		</style>
 
 		<div> <!-- this is just to provide a parent.  not ideal to be sure. -->
 			<div id=header>
@@ -11,7 +14,7 @@
 
 
 		<div id=menu>
-			<span id=menuitem data="__page__-__label__">&nbsp;<a href="__page__">__label__</a>&nbsp;</span>
+			<span class=hid id=menuitem data="__page__-__label__">&nbsp;<a href="__page__">__label__</a>&nbsp;</span>
 		</div>
 
 
@@ -23,7 +26,7 @@
 		</p>
 
 		<div id=container>
-			<div id=protodiv>
+			<div id=protodiv class=hid>
 				<div>__heading__</div>
 				<div>__name__</div>
 				<div>__when__</div>
