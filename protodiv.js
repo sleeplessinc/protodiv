@@ -32,10 +32,12 @@ ProtoDiv.elem = function( v ) {
 	return document.body;
 }
 
-ProtoDiv.substitute = function(s, obj) {
-	for(var key in obj) {
-		re = new RegExp("__"+key+"__", "g")
-		s = s.replace(re, obj[key])
+ProtoDiv.substitute = function(s, hash) {
+	for(var key in hash) {
+		if( typeof hash[key] === "string" ) {
+			var re = new RegExp("__"+key+"__", "g")
+			s = s.replace(re, hash[key])
+		}
 	}
 	return s
 }
@@ -47,7 +49,7 @@ ProtoDiv.inject = function( elem, hash ) {
 	e.innerHTML = ProtoDiv.substitute( e.innerHTML, hash )
 
 	for(i = 0; i < e.attributes.length; i++) {
-		a = e.attributes[i]
+		var a = e.attributes[i]
 		var x = a.textContent ? 'textContent' : 'value';
 		a[x] = ProtoDiv.substitute(a[x], hash)    
 	}
@@ -84,7 +86,7 @@ ProtoDiv.replicate = function( arr, orig, cb ) {
 		var a = arr[i]
 
 		var e = orig.cloneNode(true)
-		delete e.id
+		e.removeAttribute( "id" ); // this doesn't work in IE -> delete e.id
 
 		orig.clones.push( e );
 
@@ -93,7 +95,7 @@ ProtoDiv.replicate = function( arr, orig, cb ) {
 		ProtoDiv.inject(e, a)
 
 		if( cb ) {
-			cb( e );
+			cb( e, a );
 		}
 	}
 

@@ -1,6 +1,6 @@
 {
 	"name": "protodiv",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"description" : "Simple browser widget for displaying dynamic data",
 	"author": "Joe Hitchens <joe@sleepless.com> (sleepless.com)",
 	"license": {

@@ -1,4 +1,10 @@
 <html>
+	<head>
+		<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+		<script src=protodiv.js></script>
+		<script src=protodivdemo.js></script>
+	</head>
+
 	<body>
 		<h1> Example #1 </h1>
 
@@ -6,11 +12,7 @@
 			.hid { visibility: hidden; }
 		</style>
 
-		<div> <!-- this is just to provide a parent.  not ideal to be sure. -->
-			<div id=header>
-				<h2>__title__</h2>
-			</div>
-		</div>
+		<h2 id=title class=hid>__title__</h2>
 
 
 		<div id=menu>
@@ -34,10 +36,14 @@
 			</div>
 		</div>
 
+		<div id=sec_tmpl>
+			<h3>__section__</h3>
+			<ul >
+				<li> <b>__name__</b> <br> __desc__ </li>
+			</ul>
+		</div>
+
 
 	</body>
-
-	<script src=protodiv.js></script>
-	<script src=protodivdemo.js></script>
 
 </html>
