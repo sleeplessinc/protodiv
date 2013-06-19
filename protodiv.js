@@ -25,74 +25,72 @@ IN THE SOFTWARE.
 ProtoDiv = {}
 
 ProtoDiv.elem = function( v ) {
-	if( typeof v === "string")
-		return document.getElementById(v);
-	if( v instanceof HTMLElement )
-		return v;
-	return document.body;
+	if( typeof v === "string") {
+		v = document.getElementById( v );
+	}
+	if( ! v ) {
+		v = document.body;
+	}
+	return v;
 }
 
-ProtoDiv.substitute = function(s, hash) {
-	for(var key in hash) {
-		if( typeof hash[key] === "string" ) {
-			var re = new RegExp("__"+key+"__", "g")
-			s = s.replace(re, hash[key])
+ProtoDiv.substitute = function( s, data ) {
+	for( var key in data ) {
+		if( typeof data[ key ] === "string" ) {
+			var re = new RegExp( "__" + key + "__", "g" );
+			s = s.replace( re, data[ key ] );
 		}
 	}
-	return s
+	return s;
 }
 
-ProtoDiv.inject = function( elem, hash ) {
-
-	var e = ProtoDiv.elem( elem )
-
-	e.innerHTML = ProtoDiv.substitute( e.innerHTML, hash )
-
-	for(i = 0; i < e.attributes.length; i++) {
-		var a = e.attributes[i]
-		var x = a.textContent ? 'textContent' : 'value';
-		a[x] = ProtoDiv.substitute(a[x], hash)    
+ProtoDiv.inject = function( elem, data ) {
+	var e = ProtoDiv.elem( elem );
+	e.innerHTML = ProtoDiv.substitute( e.innerHTML, data );
+	var attrs = e.attributes;
+	for( var i = 0 ; i < attrs.length ; i++ ) {
+		var attr = attrs[ i ];
+		var val = attr.textContent;
+		if( val ) {
+			val = ProtoDiv.substitute( val, data );
+			attr.textContent = val;
+		}
 	}
-
-	return e
+	return e;
 }
 
 
-ProtoDiv.replicate = function( arr, orig, cb ) {
+ProtoDiv.replicate = function( orig, arr, cb ) {
 
-	if(!(arr instanceof Array))
+	orig = ProtoDiv.elem( orig );
+
+	if( ! ( arr instanceof Array ) ) {
 		arr = [arr]
-
-	if( typeof orig === "function" ) {
-		cb = orig;
-		orig = document.body;
-	}
-	else {
-		orig = ProtoDiv.elem( orig );
 	}
 
-	var sib = orig.nextSibling 	// can be null
+	var sib = orig.nextSibling 	// might be null
 	orig.sib = sib;
+
 	var mom = orig.parentNode
 	orig.mom = mom;
 
-	orig.remove();		// take out of dom
+	orig.parentNode.removeChild( orig );		// take prototype object out of dom
 
 	orig.clones = [];	// for storing refs to the clones
 
 	var l = arr.length
-	for(var i = 0; i < l; i++) {
+	for( var i = 0 ; i < l ; i++ ) {
 
-		var a = arr[i]
+		var a = arr[ i ]
 
-		var e = orig.cloneNode(true)
-		e.removeAttribute( "id" ); // this doesn't work in IE -> delete e.id
+		var e = orig.cloneNode( true )
+		e.removeAttribute( "id" ); // "delete e.id" doesn't work in IE
 
 		orig.clones.push( e );
 
-		mom.insertBefore(e, sib)
+		mom.insertBefore( e, sib );
 
-		ProtoDiv.inject(e, a)
+		ProtoDiv.inject( e, a );
 
 		if( cb ) {
 			cb( e, a );
@@ -103,30 +101,25 @@ ProtoDiv.replicate = function( arr, orig, cb ) {
 }
 
 ProtoDiv.reset = function( orig ) {
-
-	if( ! orig )
-		return;
-
+	orig = ProtoDiv.elem( orig );
 	var clones = orig.clones;
-	if( ! clones )
-		return;
-
-	var l = clones.length;
-	if( l < 1 )
-		return;
-	
-	// replace original element
-	orig.mom.insertBefore( orig, clones[0] );
-
-	// remove the clones
-	for( var i = 0; i < l; i++ ) {
-		clones[i].remove();
+	if( clones ) {
+		var l = clones.length;
+		if( l > 0 ) {
+			// replace original element
+			orig.mom.insertBefore( orig, clones[ 0 ] );
+			// remove the clones
+			for( var i = 0; i < l; i++ ) {
+				clones[ i ].remove();
+			}
+			clones.length = 0;
+		}
 	}
 }
 
-ProtoDiv.rere = function( arr, orig, cb ) {
+ProtoDiv.rere = function( orig, arr, cb ) {
     ProtoDiv.reset( orig )
-    ProtoDiv.replicate( arr, orig, cb )
+    ProtoDiv.replicate( orig, arr, cb )
 }
 
 
