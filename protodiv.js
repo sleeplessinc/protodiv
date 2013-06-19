@@ -48,12 +48,30 @@ ProtoDiv.inject = function( elem, data ) {
 	var e = ProtoDiv.elem( elem );
 	e.innerHTML = ProtoDiv.substitute( e.innerHTML, data );
 	var attrs = e.attributes;
-	for( var i = 0 ; i < attrs.length ; i++ ) {
-		var attr = attrs[ i ];
-		var val = attr.textContent;
-		if( val ) {
-			val = ProtoDiv.substitute( val, data );
-			attr.textContent = val;
+	if( navigator.appName == "Microsoft Internet Explorer" ) {
+		for( var k in attrs ) {
+			var val = e.getAttribute( k );
+			if( val ) {
+				if( typeof val === "string" ) {
+					if( val.match( /__/ ) ) {
+						val = ProtoDiv.substitute( val, data );
+						e.setAttribute( k, val );
+					}
+				}
+			}
+		}
+	}
+	else {
+		for( var i = 0 ; i < attrs.length ; i++ ) {
+			var attr = attrs[ i ];
+			var val = attr.value;
+			if( val ) {
+				if( typeof val === "string" ) {
+					if( val.match( /__/ ) ) {
+						attr.value = ProtoDiv.substitute( val, data );
+					}
+				}
+			}
 		}
 	}
 	return e;
